@@ -1,0 +1,2078 @@
+<app-header></app-header>
+<!-- <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+  <p style="color: white">Loading...</p>
+</ngx-spinner> -->
+<div class="container-fluid pt68">
+  <div class="row"></div>
+  <div class="row">
+    <div class="col-10 col-sm-11 col-md-11 col-lg-10 col-xl-10 p-0 m-auto">
+      <!-- Button trigger modal -->
+
+      <div class="col-12">
+        <div class="add-action mt-2">
+          <a ref="#" data-bs-toggle="modal" data-bs-target="#createActionModal" style="cursor: pointer"
+            (click)="addAction()">
+            <img src="../../assets/images/add_icon.png" class="icon pe-1" alt="" />Add Action</a>
+        </div>
+      </div>
+
+      <!-- Modal -->
+
+      <div class="modal fade" id="createActionModal" tabindex="-1" aria-labelledby="createActionModalLabel"
+        aria-hidden="true" style="height: 100vh" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog create-action">
+          <div class="modal-content header">
+            <div class="modal-header" style="display: inline-block" (click)="ClickToHide()">
+              <!-- <div class="row"> -->
+              <div class="row">
+                <h5 *ngIf="add == true" class="title m-0 ms-2">
+                  <img src="" alt="" /> <span class="slash">//</span> Create
+                  Action
+                </h5>
+                <h5 *ngIf="edit == true" class="title m-0 ms-2">
+                  <img src="" alt="" /> <span class="slash">//</span> Update
+                  Action
+                </h5>
+                <span style="display: none" #actionClose data-bs-dismiss="modal"></span>
+                <a type="button" class="close-btn ms-auto me-2" style="text-align: right"><i
+                    (click)="closeActionModel()" class="fa-solid fa-xmark"></i>
+                </a>
+              </div>
+              <div class="row">
+                <div class="col-6 d-flex align-items-center profile mb-1">
+                  <img *ngIf="mainAssignUsers.length == 0" class="prof-img"
+                    src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="" />
+                  <img *ngIf="
+                      mainAssignUsers.length != 0 &&
+                      mainAssignUsers[0].upimgthu != null
+                    " class="prof-img" src="{{ imgURL }}{{ mainAssignUsers[0].upimgthu }}" alt="" />
+                  <img *ngIf="
+                      mainAssignUsers.length != 0 &&
+                      mainAssignUsers[0].upimgthu == null
+                    " class="prof-img" src="https://www.w3schools.com/howto/img_avatar.png" alt="" />
+                  <div class="mt-1 ps-1">
+                    <h6 class="m-0 p-0">Assigned to:</h6>
+                    <h5 *ngIf="mainAssignUsers.length != 0" class="m-0 p-0 d-flex align-items-center"
+                      data-bs-toggle="modal" data-bs-target="#assignActionModal">
+                      {{ mainAssignUsers[0].ufname | titlecase }}
+                      {{ mainAssignUsers[0].ulname | titlecase }}
+                      <img src="../../assets/images/edit_iconblue.png" class="icon ms-1" alt="" />
+                    </h5>
+                    <h5 *ngIf="mainAssignUsers.length == 0" class="m-0 p-0 d-flex align-items-center"
+                      data-bs-toggle="modal" data-bs-target="#assignActionModal">
+                      ADD ASSIGNEE
+                      <img src="../../assets/images/add_icon.png" class="icon ms-1" alt="" (click)="alphaFilter('')" />
+                    </h5>
+                    <h6 *ngIf="assignedRef == true && mainAssignUsers.length == 0" style="
+                        color: red;
+                        font-size: 0.7rem;
+                        font-family: RobotoCondensed-Regular;
+                      ">
+                      Please select Assignee
+                    </h6>
+                  </div>
+                </div>
+                <div class="col-6" style="text-align: right">
+                  <select style="margin-top: 8px; width: auto; cursor: pointer" class="selectClass"
+                    [(ngModel)]="selectedStore" (change)="storeChange()" [disabled]="editData?.tStatus == 'Y'">
+                    <option style="display: none" value="" selected>
+                      Select Store
+                    </option>
+                    <option *ngFor="let i of allStores" [ngValue]="i">
+                      {{ i.asDealername }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="body ps-3 py-0">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-8 pe-4" (click)="ClickToHide()">
+                      <div class="action-group">
+                        <div class="col-12 d-flex align-items-baseline">
+                          <div class="dropdown w-100">
+                            <label> Product </label>
+                            <select disabled *ngIf="projectId != ''" style="-webkit-appearance: none; cursor: pointer"
+                              class="selectClass mt-1" [(ngModel)]="selectedModule"
+                              [disabled]="editData?.tStatus == 'Y'">
+                              <option value="">Select Module</option>
+                              <option *ngFor="let i of modulesArray" [value]="i.aopId">
+                                {{ i.aopName }}
+                              </option>
+                            </select>
+                            <select *ngIf="projectId == ''" class="selectClass " [(ngModel)]="selectedModule"
+                              [disabled]="editData?.tStatus == 'Y'">
+                              <option value="">Select Module</option>
+                              <option *ngFor="let i of modulesArray" [value]="i.aopId">
+                                {{ i.aopName }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <h6 *ngIf="moduleRef == true && selectedModule == ''" style="color: red">
+                          Please select Module
+                        </h6>
+                        <div class="col-12">
+                          <div class="form-group action-group">
+                            <label> Action Name </label>
+                            <input type="name" class="form-control w-100" id="title" [(ngModel)]="actionName"
+                              placeholder="" [disabled]="editData?.tStatus == 'Y'" />
+                          </div>
+                          <h6 *ngIf="nameRef == true && actionName == ''" style="color: red">
+                            Please enter Title
+                          </h6>
+                        </div>
+                        <div class="col-12">
+                          <label> Description </label>
+                          <textarea class="form-control text-area" [(ngModel)]="description"
+                            id="exampleFormControlTextarea1" rows="6" placeholder=""
+                            [disabled]="editData?.tStatus == 'Y'"></textarea>
+                        </div>
+                        <h6 *ngIf="descRef == true && description == ''" style="color: red">
+                          Please enter Description
+                        </h6>
+                        <div class="col-4 attachment" *ngIf="addfile">
+                          <label>Attachments</label>
+                          <div style="display: flex" class="i-56">
+                            <span style="display: flex; margin-right: -20px" *ngFor="let i of viewpath; let j = index">
+                              <span *ngIf="i.type == 'xls'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'xlsx'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'csv'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'ods'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'txt'">
+                                <i class="fa-regular fa-file-lines fa-4x" style="margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'png'">
+                                <i class="fa-regular fa-file-image fa-4x" style="margin-left: 65%"></i>
+                                <!-- <img
+                                  class="img-56"
+                                  [title]="i.name"
+                                  [src]="i.link"
+                                  alt=""
+                                /> -->
+                              </span>
+                              <span *ngIf="i.type == 'jpg'">
+                                <i class="fa-regular fa-file-image fa-4x" style="margin-left: 65%"></i>
+
+                                <!-- <img
+                                  class="img-56"
+                                  [title]="i.name"
+                                  [src]="i.link"
+                                  alt=""
+                              /> -->
+                              </span>
+                              <span *ngIf="i.type == 'jpeg'">
+                                <!-- <img
+                                  class="img-56"
+                                  [title]="i.name"
+                                  [src]="i.link"
+                                  alt=""
+                              /> -->
+                                <i class="fa-regular fa-file-image fa-4x" style="margin-left: 65%"></i>
+                              </span>
+                              <span *ngIf="i.type == 'pdf'">
+                                <i class="fa-regular fa-file-pdf fa-4x" style="color: red; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'doc'">
+                                <i class="fa-regular fa-file-word fa-4x"
+                                  style="color: blue; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'md'">
+                                <i class="fa-regular fa-file-word fa-4x"
+                                  style="color: blue; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'docx'">
+                                <i class="fa-regular fa-file-word fa-4x"
+                                  style="color: blue; margin-left: 65%"></i></span>
+                              <a id="upload" style="
+                                  color: black;
+                                  text-overflow: ellipsis;
+                                  margin-left: -20%;
+                                  margin-top: 35%;
+                                  white-space: nowrap;
+                                  width: 81px;
+                                  overflow: hidden;
+                                  text-overflow: ellipsis;
+                                " href="{{ i.link }}" target="_blank"><b>{{ i.name }}</b></a>
+                              <i class="fa-solid fa-xmark" (click)="Removeimage(j, i.name)" *ngIf="i.name != ''"
+                                style="margin-top: 37%; font-size: 134%"></i>
+                            </span>
+                          </div>
+                          <input type="file" style="display: none" (change)="selectFile($event)" #input />
+                          <h6 (click)="input.click()" class="mt-2">
+                            <a>
+                              <img src="../../assets/images/add_icon.png" style="height: 1rem;" class="icon pe-1"
+                                alt="" />Add attachment</a>
+                          </h6>
+                          <div class="h-50">&nbsp;</div>
+                        </div>
+                        <!-- //////// Attachments  /////// -->
+                        <div class="col-4  attachment" *ngIf="editfile">
+                          <label>Attachments</label>
+                          <div style="display: flex" class="i-56">
+                            <span style="display: flex; margin-right: -20px" *ngFor="let i of viewpath; let j = index">
+                              <span *ngIf="i.type == 'xls'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'xlsx'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'csv'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'ods'"><i class="fa-regular fa-file-excel fa-4x"
+                                  style="color: green; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'txt'">
+                                <i class="fa-regular fa-file-lines fa-4x" style="margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'png'">
+                                <img class="img-56" [title]="i.name" [src]="i.link" alt="" /></span>
+                              <span *ngIf="i.type == 'jpg'">
+                                <img class="img-56" [title]="i.name" [src]="i.link" alt="" /></span>
+                              <span *ngIf="i.type == 'jpeg'">
+                                <img class="img-56" [title]="i.name" [src]="i.link" alt="" /></span>
+                              <span *ngIf="i.type == 'pdf'">
+                                <i class="fa-regular fa-file-pdf fa-4x" style="color: red; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'doc'">
+                                <i class="fa-regular fa-file-word fa-4x"
+                                  style="color: blue; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'md'">
+                                <i class="fa-regular fa-file-word fa-4x"
+                                  style="color: blue; margin-left: 65%"></i></span>
+                              <span *ngIf="i.type == 'docx'">
+                                <i class="fa-regular fa-file-word fa-4x" style="color: blue"></i></span>
+                              <a id="upload" style="
+                                  color: black;
+                                  text-overflow: ellipsis;
+                                  margin-left: -20%;
+                                  margin-top: 35%;
+                                  white-space: nowrap;
+                                  width: 81px;
+                                  overflow: hidden;
+                                  text-overflow: ellipsis;
+                                " href="{{ i.link }}" target="_blank"><b>{{ i.name }}</b></a>
+                              <i class="fa-solid fa-xmark" (click)="Removeimage(j, i.name)" *ngIf="i.name != ''"
+                                style="margin-top: 37%; font-size: 134%"></i>
+                            </span>
+                          </div>
+                          <input type="file" style="display: none" (change)="selectFile($event)" #input
+                            [disabled]="editData?.tStatus == 'Y'" />
+                          <h6 (click)="input.click()" class="mt-2">
+                            <a>
+                              <img src="../../assets/images/add_icon.png" class="icon pe-1" alt="" />Add attachment</a>
+                          </h6>
+                          <div class="h-50">&nbsp;</div>
+                        </div>
+                        <!-- <div class="col-4 mt-4 attachment" *ngIf="addfile">
+                                <h5 class="m-0">Attachments</h5>
+                                <span
+                                  ><a id="upload" style="color: black">{{
+                                    lastpart
+                                  }}</a></span
+                                >
+                                <input
+                                  type="file"
+                                  style="display: none"
+                                  (change)="selectFile($event)"
+                                  #input
+                                />
+                                <h6 (click)="input.click()" class="mt-2">
+                                  <a>
+                                    <img
+                                      src="../../assets/images/add_icon.png"
+                                      class="icon pe-1"
+                                      alt=""
+                                    />Add attachment</a
+                                  >
+                                </h6>
+                                <div class="h-50">&nbsp;</div>
+                              </div>
+                              <div class="col-4 mt-4 attachment" *ngIf="editfile">
+                                <h5 class="m-0">Attachments</h5>
+                                <span (click)="fileChangeEvent()"
+                                  ><a id="upload" style="color: black" target="_blank"
+                                    ><b>{{ lastpart1 }}</b></a
+                                  ></span
+                                >
+                                <input
+                                  type="file"
+                                  style="display: none"
+                                  (change)="selectFile($event)"
+                                  #input
+                                />
+                                <h6 (click)="input.click()" class="mt-2">
+                                  <a>
+                                    <img
+                                      src="../../assets/images/add_icon.png"
+                                      class="icon pe-1"
+                                      alt=""
+                                    />Add attachment</a
+                                  >
+                                </h6>
+                                <div class="h-50">&nbsp;</div>
+                              </div> -->
+                      </div>
+                      <div class="col-10 mt-2 mb-5">
+                        <div class="col-9 mt-4 save-btn">
+                          <button *ngIf="add == true" type="button" class="btn btn-success w-100"
+                            (click)="saveAction()">
+                            Save
+                          </button>
+                          <button *ngIf="edit == true" type="button" class="btn btn-success w-100" [ngStyle]="{
+                              display:
+                                editData.tStatus != 'Y' ? 'block' : 'none'
+                            }" (click)="updateAction()">
+                            Update
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-4 m-0 p-0 bdr-lft">
+                      <div (click)="StatusClick()" style="cursor: pointer">
+                        <div class="d-flex align-items-center px-3 py-2 m-0 summary-dd">
+                          <img src="../../assets/images/status_icon.png" class="icon pe-2" style="height: 1rem;"
+                            alt="" />
+                          <div class="d-flex flex-column">
+                            <h5 class="m-0 p-0 d-flex align-items-center"
+                              style="font-size: 0.8rem; font-family: RobotoCondensed-Bold">
+                              Status
+                            </h5>
+                            <h6 class="m-0 p-0">
+                              Open:<span class="ps-1"> {{ show.tsName }}</span>
+                            </h6>
+                          </div>
+                          <div class="ms-auto">
+                            <i class="fa-sharp fa-solid fa-chevron-down"></i>
+                          </div>
+                          <div class="status-popup p-4" *ngIf="StatusHide">
+                            <div *ngFor="let i of task">
+                              <h6 style="cursor: pointer" (click)="open(i)">
+                                {{ i.tsName }}
+                              </h6>
+                            </div>
+                            <!-- <div class="form-group">
+                              <input
+                                type="name"
+                                class="form-control w-100"
+                                id="title"
+                                placeholder="Action Name"
+                              />
+                            </div> -->
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Create Action Due Date  -->
+                      <!-- beforeclick -->
+                      <!-- <div [owlDateTimeTrigger]="dt1" style="cursor: pointer" (click)="ClickToHide()" [ngStyle]="{
+                          display: dateTime1 == '' ? 'block' : 'none'
+                        }">
+                        <div class="d-flex align-items-center p-3 m-0 action-dd">
+                          <h5 class="m-0 p-0 d-flex align-items-center">
+                            <img src="../../assets/images/date_icon.png" class="icon pe-2" alt="" />
+                            Due Date
+                          </h5>
+                          <div class="ms-auto">
+                            <i class="fa-sharp fa-solid fa-chevron-down"></i>
+                          </div>
+                        </div>
+                      </div> -->
+                      <!-- afterclick -->
+                      <div [owlDateTimeTrigger]="dt1" style="cursor: pointer;position:relative" (click)="ClickToHide()">
+                        <div class="d-flex align-items-center px-3 py-2 m-0 summary-dd">
+                          <img src="../../assets/images/date_icon.png" class="icon pe-2" alt="" />
+                          <div class="d-flex flex-column">
+                            <h5 class="m-0 p-0 d-flex align-items-center"
+                              style="font-size: 0.8rem; font-family: RobotoCondensed-Bold">
+                              Due Date
+                            </h5>
+                            <h6 class="m-0 p-0">
+                              Open:<span class="ps-1">
+                                {{ dateTime1 | date }}</span>
+                            </h6>
+                          </div>
+                          <div class="ms-auto">
+                            <input placeholder="Date:" [(ngModel)]="dateTime1" [min]="min" [max]="max"
+                              [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1" style="visibility: hidden; width: 5px" />
+                            <i class="fa-sharp fa-solid fa-chevron-down" [owlDateTimeTrigger]="dt1"></i>
+                            <owl-date-time [pickerType]="'calendar'" #dt1 [disabled]="editData?.tStatus == 'Y'">
+                            </owl-date-time>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Create Action Priority -->
+                      <!-- beforeclick -->
+                      <!-- <div
+                        (click)="PriorityClick()"
+                        [ngStyle]="{ display: show1 == '' ? 'block' : 'none' }"
+                        style="cursor: pointer"
+                      >
+                        <div
+                          class="d-flex align-items-center p-3 m-0 action-dd"
+                        >
+                          <div>
+                            <h5 class="m-0 p-0 d-flex align-items-center">
+                              <img
+                                src="../../assets/images/priority_icon.png"
+                                class="icon pe-2"
+                                alt=""
+                              />
+                              Priority
+                            </h5>
+                            <h6
+                              *ngIf="
+                                priorityRef == true && selectedPriority == ''
+                              "
+                              style="color: red"
+                            >
+                              Please Select Priority
+                            </h6>
+                          </div>
+                          <div class="ms-auto">
+                            <i class="fa-sharp fa-solid fa-chevron-down"></i>
+                          </div>
+                          <div
+                            class="gyr-popup p-4 d-flex flex-column"
+                            *ngIf="priorityHide"
+                          >
+                            <button
+                              type="button"
+                              class="btn btn-primary sml-btn"
+                              *ngFor="let i of priority"
+                              style="background-color:{{ i.tpColorCode }}"
+                              (click)="open1(i)"
+                            >
+                              {{ i.tpTitle }}
+                            </button>
+                          </div>
+                        </div>
+                      </div> -->
+                      <!-- afterclick -->
+                      <div (click)="PriorityClick()" [ngStyle]="{ display: show1 != '' ? 'block' : 'none' }"
+                        style="cursor: pointer">
+                        <div class="d-flex align-items-center px-3 py-2 m-0 summary-dd" style="cursor: pointer">
+                          <img src="../../assets/images/priority_icon.png" class="icon pe-2" alt="" />
+                          <div class="d-flex flex-column">
+                            <h5 class="m-0 p-0 d-flex align-items-center"
+                              style="font-size: 0.8rem; font-family: RobotoCondensed-Bold">
+                              Priority
+                            </h5>
+                            <button type="button" class="btn btn-primary sml-btn" style="background-color: {{ b }}">
+                              {{ show1 }}
+                            </button>
+                            <h6 *ngIf="
+                                priorityRef == true && selectedPriority == ''
+                              " style="color: red">
+                              Select Priority
+                            </h6>
+                          </div>
+                          <div class="ms-auto">
+                            <i class="fa-sharp fa-solid fa-chevron-down"></i>
+                          </div>
+                          <div class="gyr-popup p-4 d-flex flex-column" *ngIf="priorityHide">
+                            <button type="button" class="btn btn-primary sml-btn" *ngFor="let i of priority"
+                              style="background-color:{{ i.tpColorCode }}" (click)="open1(i)">
+                              {{ i.tpTitle }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Create Action Tags -->
+                      <div>
+                        <form [formGroup]="tagForm" (ngSubmit)="AddTagData()">
+                          <div class="d-flex align-items-center px-3 py-2 m-0 summary-dd" style="cursor: pointer"> <img
+                              src="../../assets/images/tags_icon.png" class="icon pe-2 TagImage" alt="" />
+                            <div class="d-flex flex-column">
+                              <h5 class="m-0 p-0 d-flex align-items-center"
+                                style="font-size: 0.8rem; font-family: RobotoCondensed-Bold">Tags</h5>
+                              <div class="row row-cols-2">
+                                <div class="ovr-flw" *ngFor="let z of selectTagList; let i = index"> <button
+                                    type="button" class="btn btn-primary sml-btn TagButton"> {{ z.tagTitle }}
+                                    <!-- <span>                                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
+                            class="bi bi-x-lg" viewBox="0 0 16 16" (click)="RemoveTags(i, z.tagId)">                                        <path
+                              d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />                                      </svg>                                    </span> -->
+                                  </button> </div>
+                              </div> <img src="../../assets/images/add_icon.png" class="icon ms-1 addimage" alt="" />
+                              <input type="text" class="form-control InputTag" formControlName="addtagname"
+                                (keyup)="OnChange($event)" />
+                              <div *ngIf="FormSubmitted"></div>
+                              <h6 *ngIf="tagRef == true && finalTagIds == ''" style="color: red"> Please enter tag
+                              </h6>
+                              <div class="tagtable" *ngIf="hidecard">
+                                <div class="tagloop" *ngFor="let x of filtered; let i = index">
+                                  <h4 class="selectTag" (click)="SelectTag(x)"> {{ x.tagTitle }}
+                                  </h4>
+                                  <hr class="tagshr" />
+                                </div>
+                              </div> <!-- </div>                              </div> -->
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <!-- Create Action followers -->
+                      <!-- beforeclick -->
+                      <div [ngStyle]="{
+                          display: mainAssignFollowers == '' ? 'block' : 'none'
+                        }">
+                        <div class="d-flex align-items-center p-3 m-0 action-dd" style="border: none; cursor: pointer"
+                          data-bs-toggle="modal" data-bs-target="#assignFollowersModal" (click)="alphaFilter('')">
+                          <h5 class="m-0 p-0 d-flex align-items-center"
+                            style="font-size: 0.8rem; font-family: RobotoCondensed-Bold">
+                            <img src="../../assets/images/followers_icon.png" class="icon pe-2" alt="" />
+                            Followers
+                          </h5>
+                          <div class="ms-auto">
+                            <i class="fa-sharp fa-solid fa-chevron-down"></i>
+                          </div>
+                          <div class="d-flex action-dd profile mb-1" style="display: block !important">
+                            <div style="left: 3vh">
+                              <ng-container class="" *ngFor="let i of mainAssignFollowers">
+                                <a (mouseenter)="hoverIdx = i" (mouseleave)="hoverIdx = -1">
+                                  <span [ngClass]="{
+                                      'overlay-icon': true,
+                                      hide: hoverIdx !== i
+                                    }">
+                                    {{ i.ufname }} {{ i.ulname }}
+                                  </span>
+                                  <img *ngIf="i.upimgthu != null" class="prof-img" src="{{ imgURL }}{{ i?.upimgthu }}"
+                                    alt="" />
+                                  <!-- <span class="overlay" >{{i.ufname}}</span> -->
+                                  <img *ngIf="i.upimgthu == null" class="prof-img"
+                                    src="https://www.w3schools.com/howto/img_avatar.png" alt="" />
+                                </a>
+                              </ng-container>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- afterclick -->
+                      <div [ngStyle]="{
+                          display: mainAssignFollowers != '' ? 'block' : 'none'
+                        }">
+                        <div class="d-flex align-items-center p-3 m-0 summary-dd" style="border: none; cursor: pointer"
+                          data-bs-toggle="modal" data-bs-target="#assignFollowersModal" (click)="alphaFilter('')">
+                          <h5 class="m-0 p-0 d-flex align-items-center">
+                            <img src="../../assets/images/followers_icon.png" class="icon pe-2" alt="" />
+                            Followers
+                          </h5>
+                          <div class="ms-auto">
+                            <i class="fa-sharp fa-solid fa-chevron-down"></i>
+                          </div>
+                        </div>
+                        <div class="d-flex action-dd profile mb-1" style="display: block !important">
+                          <div style="left: 3vh">
+                            <ng-container class="" *ngFor="let i of mainAssignFollowers">
+                              <a (mouseenter)="hoverIdx = i" (mouseleave)="hoverIdx = -1">
+                                <span [ngClass]="{
+                                    'overlay-icon': true,
+                                    hide: hoverIdx !== i
+                                  }">
+                                  {{ i.ufname }} {{ i.ulname }}
+                                </span>
+                                <img *ngIf="i.upimgthu != null" class="prof-img" src="{{ imgURL }}{{ i?.upimgthu }}"
+                                  alt="" />
+                                <!-- <span class="overlay" >{{i.ufname}}</span> -->
+                                <img *ngIf="i.upimgthu == null" class="prof-img"
+                                  src="https://www.w3schools.com/howto/img_avatar.png" alt="" />
+                              </a>
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                      <div *ngIf="edit == true" class="d-flex align-items-center task px-3">
+                        <img src="../../assets/images/Action.png" alt="" />
+
+                        <div class="ps-2 mt-1">
+                          <h6 class="m-0 p-0">
+                            {{ editData?.tCts | date : "MMM d, y" }}
+                          </h6>
+
+                          <h5 class="m-0 p-0">
+                            <span>Created by </span>{{ editData?.tCreatedName }}
+                          </h5>
+                        </div>
+                      </div>
+
+                      <div *ngIf="edit == true && editData?.tUts != editData?.tCts"
+                        class="d-flex align-items-center task px-3 mt-3 mb-5">
+                        <img src="../../assets/images/edit_icon.png" alt="" />
+
+                        <div class="ps-2 mt-1">
+                          <h6 class="m-0 p-0">
+                            {{ editData?.tUts | date : "MMM d, y" }}
+                          </h6>
+
+                          <h5 class="m-0 p-0">
+                            <span>updated by </span>{{ editData?.tUpdatedname }}
+                          </h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!----Assign Action -->
+      <div class="modal fade" id="assignActionModal" tabindex="-1" aria-labelledby="assignActionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content header" *ngIf="HideStore">
+            <div class="modal-body">
+              <div class="d-flex justify-content-center align-items-center" style="width: max-content">
+                <div class="assign-action">
+                  <div class="header pt-3 pe-5">
+                    <div class="row">
+                      <div class="col-3">
+                        <h5 class="title m-0 ms-2">
+                          <img src="" alt="" />
+                          <span class="slash">//</span> ASSIGN ACTION
+                        </h5>
+                      </div>
+                      <div class="col-9 d-flex justify-content-between align-items-center">
+                        <div class="dropdown w-100">
+                          <!-- <button class="btn btn-secondary dropdown-toggle w-100"
+                                                        type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        Group
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item" href="#">Depatment A</a>
+                                                        <a class="dropdown-item" href="#">Depatment B</a>
+                                                        <a class="dropdown-item" href="#">Depatment C</a>
+                                                    </div> -->
+                        </div>
+                        <div class="dropdown w-100">
+                          <!-- <button class="btn btn-secondary dropdown-toggle w-100"
+                                                        type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        Western Honda
+                                                    </button> -->
+                          <!-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> -->
+                          <!-- <select
+                            class="selectClass"
+                            (change)="storeChange($event)"
+                          >
+                            <option
+                              *ngFor="let i of allStores"
+                              [value]="i.asDealername"
+                            >
+                              {{ i.asDealername }}
+                            </option>
+                          </select> -->
+                          <!-- <a class="dropdown-item" *ngFor="let i of allStores">{{i.asDealername}}</a> -->
+                          <!-- <a class="dropdown-item" >Depatment B</a>
+                                                        <a class="dropdown-item" >Depatment C</a> -->
+                          <!-- </div> -->
+                        </div>
+                        <div class="dropdown w-100 me-2">
+                          <!-- <button class="btn btn-secondary dropdown-toggle w-100"
+                                                        type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        All
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item" href="#">Depatment A</a>
+                                                        <a class="dropdown-item" href="#">Depatment B</a>
+                                                        <a class="dropdown-item" href="#">Depatment C</a>
+                                                    </div> -->
+                        </div>
+                        <div class="inp_search">
+                          <form>
+                            <input type="search_bar" name="assigneeFilter" [(ngModel)]="assigneeFilter"
+                              placeholder="Search..." />
+                            <button type="submit">Search</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row list_page py-3 px-2">
+                      <div class="col-12 d-flex justify-content-between align-items-center">
+                        <a [ngClass]="{ badge: selectAlpha === '' }" style="cursor: pointer"
+                          (click)="alphaFilter('')">All</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'A' }" (click)="alphaFilter('A')">A</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'B' }" (click)="alphaFilter('B')">B</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'C' }" (click)="alphaFilter('C')">C</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'D' }" (click)="alphaFilter('D')">D</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'E' }" (click)="alphaFilter('E')">E</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'F' }" (click)="alphaFilter('F')">F</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'G' }" (click)="alphaFilter('G')">G</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'H' }" (click)="alphaFilter('H')">H</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'I' }" (click)="alphaFilter('I')">I</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'J' }" (click)="alphaFilter('J')">J</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'K' }" (click)="alphaFilter('K')">K</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'L' }" (click)="alphaFilter('L')">L</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'M' }" (click)="alphaFilter('M')">M</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'N' }" (click)="alphaFilter('N')">N</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'O' }" (click)="alphaFilter('O')">O</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'P' }" (click)="alphaFilter('P')">P</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'Q' }" (click)="alphaFilter('Q')">Q</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'R' }" (click)="alphaFilter('R')">R</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'S' }" (click)="alphaFilter('S')">S</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'T' }" (click)="alphaFilter('T')">T</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'U' }" (click)="alphaFilter('U')">U</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'V' }" (click)="alphaFilter('V')">V</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'W' }" (click)="alphaFilter('W')">W</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'X' }" (click)="alphaFilter('X')">X</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'Y' }" (click)="alphaFilter('Y')">Y</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'Z' }" (click)="alphaFilter('Z')">Z</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="body ps-3 py-0" style="min-height: 550px">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-9">
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <div class="assign-act-tbl table-responsive mb-4">
+                                <table>
+                                  <thead>
+                                    <tr>
+                                      <th colspan="2">User</th>
+                                      <th>Title</th>
+                                      <th>Store</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff"
+                                      type="ball-scale-multiple">
+                                      <p style="color: white">Loading...</p>
+                                    </ngx-spinner>
+                                    <tr *ngFor="
+                                        let i of allUsers
+                                          | filter : assigneeFilter;
+                                        let j = index
+                                      ">
+                                      <ng-container *ngIf="i.uid != userId">
+                                        <td class="">
+                                          <div class="round">
+                                            <input name="userRadio" class="" type="radio" id="radio{ j }}"
+                                              (change)="userSelect($event, i)" [checked]="
+                                                i.checked == true &&
+                                                i.name == 'A'
+                                              " style="height: 15px; width: 25px" />
+                                            <!-- <label for="radio{ j }}"></label> -->
+                                          </div>
+                                        </td>
+
+                                        <td>
+                                          <span><img *ngIf="i.upimgthu != null" src="{{ imgURL }}{{ i.upimgthu }}"
+                                              alt="Avatar" class="avatar me-1" />
+                                            <img *ngIf="i.upimgthu == null"
+                                              src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar"
+                                              class="avatar me-1" /> </span>{{ i.ufname | titlecase }}
+                                          {{ i.ulname | titlecase }}
+                                        </td>
+                                        <td>{{ i.urole }}</td>
+                                        <td>
+                                          {{ selectedStore.asDealername }}
+                                        </td>
+                                      </ng-container>
+                                    </tr>
+                                    <tr *ngIf="allUsers.length == 0" class="pt-4 ml-4">
+                                      <td colspan="4" style="text-align: center">
+                                        No Users Available on Your Select
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-3 pe-4 assign-ryt" style="min-height: 550px">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h5 class="">Assign Action to:</h5>
+                            <h6 class="m-0 p-0 mt-2" *ngFor="let j of assignedUsers">
+                              <span>
+                                <img *ngIf="j.upimgthu != null" src="{{ imgURL }}{{ j.upimgthu }}" alt="Avatar"
+                                  class="avatar me-1" />
+                                <img *ngIf="j.upimgthu == null" src="https://www.w3schools.com/howto/img_avatar.png"
+                                  alt="Avatar" class="avatar me-1" />
+                              </span>
+                              {{ j.ufname | titlecase }}
+                              {{ j.ulname | titlecase }}
+                            </h6>
+                          </div>
+
+                          <div class="save-btn">
+                            <button type="button" class="btn btn-success w-100" (click)="assignUsers()">
+                              Assign Action
+                            </button>
+                            <a #closebutton data-bs-dismiss="modal" style="cursor: pointer">Cancel</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!----Followers Assign modal -->
+      <div class="modal fade" id="assignFollowersModal" tabindex="-1" aria-labelledby="assignFollowersModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content header" *ngIf="HideStore">
+            <div class="modal-body">
+              <div class="d-flex justify-content-center align-items-center" style="width: max-content">
+                <div class="assign-action">
+                  <div class="header pt-3 pe-5">
+                    <div class="row">
+                      <div class="col-3">
+                        <h5 class="title m-0 ms-2">
+                          <img src="" alt="" />
+                          <span class="slash">//</span> FOLLOWERS
+                        </h5>
+                      </div>
+                      <div class="col-9 d-flex justify-content-between align-items-center">
+                        <div class="dropdown w-100">
+                          <!-- <button class="btn btn-secondary dropdown-toggle w-100"
+                                                    type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    Group
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item" href="#">Depatment A</a>
+                                                    <a class="dropdown-item" href="#">Depatment B</a>
+                                                    <a class="dropdown-item" href="#">Depatment C</a>
+                                                </div> -->
+                        </div>
+                        <div class="dropdown w-100">
+                          <!-- <button class="btn btn-secondary dropdown-toggle w-100"
+                                                    type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    Western Honda
+                                                </button> -->
+                          <!-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> -->
+                          <!-- <select
+                            class="selectClass"
+                            (change)="storeChange($event)"
+                          >
+                            <option
+                              *ngFor="let i of allStores"
+                              [value]="i.asDealername"
+                            >
+                              {{ i.asDealername }}
+                            </option>
+                          </select> -->
+                          <!-- <a class="dropdown-item" *ngFor="let i of allStores">{{i.asDealername}}</a> -->
+                          <!-- <a class="dropdown-item" >Depatment B</a>
+                                                    <a class="dropdown-item" >Depatment C</a> -->
+                          <!-- </div> -->
+                        </div>
+                        <div class="dropdown w-100 me-2">
+                          <!-- <button class="btn btn-secondary dropdown-toggle w-100"
+                                                    type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    All
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item" href="#">Depatment A</a>
+                                                    <a class="dropdown-item" href="#">Depatment B</a>
+                                                    <a class="dropdown-item" href="#">Depatment C</a>
+                                                </div> -->
+                        </div>
+                        <div class="inp_search">
+                          <form>
+                            <input type="search_bar" name="followersFilter" [(ngModel)]="followersFilter"
+                              placeholder="Search..." />
+                            <button type="submit">Search</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row list_page py-3 px-2">
+                      <div class="col-12 d-flex justify-content-between align-items-center">
+                        <a [ngClass]="{ badge: selectAlpha === '' }" style="cursor: pointer"
+                          (click)="alphaFilter('')">All</a>
+
+                        <a [ngClass]="{ badge: selectAlpha === 'A' }" (click)="alphaFilter('A')">A</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'B' }" (click)="alphaFilter('B')">B</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'C' }" (click)="alphaFilter('C')">C</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'D' }" (click)="alphaFilter('D')">D</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'E' }" (click)="alphaFilter('E')">E</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'F' }" (click)="alphaFilter('F')">F</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'G' }" (click)="alphaFilter('G')">G</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'H' }" (click)="alphaFilter('H')">H</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'I' }" (click)="alphaFilter('I')">I</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'J' }" (click)="alphaFilter('J')">J</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'K' }" (click)="alphaFilter('K')">K</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'L' }" (click)="alphaFilter('L')">L</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'M' }" (click)="alphaFilter('M')">M</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'N' }" (click)="alphaFilter('N')">N</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'O' }" (click)="alphaFilter('O')">O</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'P' }" (click)="alphaFilter('P')">P</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'Q' }" (click)="alphaFilter('Q')">Q</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'R' }" (click)="alphaFilter('R')">R</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'S' }" (click)="alphaFilter('S')">S</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'T' }" (click)="alphaFilter('T')">T</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'U' }" (click)="alphaFilter('U')">U</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'V' }" (click)="alphaFilter('V')">V</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'W' }" (click)="alphaFilter('W')">W</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'X' }" (click)="alphaFilter('X')">X</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'Y' }" (click)="alphaFilter('Y')">Y</a>
+                        <a [ngClass]="{ badge: selectAlpha === 'Z' }" (click)="alphaFilter('Z')">Z</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="body ps-3 py-0" style="min-height: 550px">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-9">
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <div class="assign-act-tbl table-responsive mb-4">
+                                <table>
+                                  <thead>
+                                    <tr>
+                                      <th colspan="2">User</th>
+                                      <th>Title</th>
+                                      <th>Store</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor="
+                                        let i of allUsers
+                                          | filter : followersFilter;
+                                        let k = index
+                                      ">
+                                      <ng-container *ngIf="i.uid != mainAssignUsers[0]?.uid">
+                                        <td class="">
+                                          <div class="round">
+                                            <input class="" type="checkbox" id="checkbox1{{ k }}" (change)="
+                                                followerSelect($event, i)
+                                              " [checked]="
+                                                i.checked == true &&
+                                                i.name == 'F'
+                                              " />
+                                            <label for="checkbox1{{ k }}"></label>
+                                          </div>
+                                        </td>
+                                        <td>
+                                          <span><img *ngIf="i.upimgthu != null" src="{{ imgURL }}{{ i.upimgthu }}"
+                                              alt="Avatar" class="avatar me-1" />
+
+                                            <img *ngIf="i.upimgthu == null"
+                                              src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar"
+                                              class="avatar me-1" /></span>{{ i.ufname | titlecase }}
+                                          {{ i.ulname | titlecase }}
+                                        </td>
+                                        <td>{{ i.urole }}</td>
+                                        <td>
+                                          {{ selectedStore.asDealername }}
+                                        </td>
+                                      </ng-container>
+                                    </tr>
+                                    <tr *ngIf="allUsers.length == 0" class="pt-4 ml-4">
+                                      <td colspan="4" style="text-align: center">
+                                        No Users Available on Your Select
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-3 pe-4 assign-ryt" style="min-height: 550px">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h5 class="">Assign Followers:</h5>
+                            <h6 class="m-0 p-0 mt-2" *ngFor="let j of assignedFollowers">
+                              <span><img *ngIf="j.upimgthu != null" src="{{ imgURL }}{{ j.upimgthu }}" alt="Avatar"
+                                  class="avatar me-1" />
+                                <img *ngIf="j.upimgthu == null" src="https://www.w3schools.com/howto/img_avatar.png"
+                                  alt="Avatar" class="avatar me-1" /></span>{{ j.ufname | titlecase }}
+                              {{ j.ulname | titlecase }}
+                            </h6>
+                            <!-- <h6 class="m-0 p-0 mt-2"><span><img
+                                                                src="https://www.w3schools.com/howto/img_avatar.png"
+                                                                alt="Avatar" class="avatar me-1"></span>Kevin Murphy
+                                                    </h6> -->
+                          </div>
+
+                          <div class="save-btn">
+                            <button type="button" class="btn btn-success w-100" (click)="assignFollowers()">
+                              Assign Followers
+                            </button>
+                            <a #closeFollowers data-bs-dismiss="modal" style="cursor: pointer">Cancel</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button trigger modal -->
+
+      <div class="col-12">
+        <div class="row">
+          <!-- High Priority -->
+          <div class="wid25">
+            <div class="red" (click)="tabopenhigh()">
+              <div style="width: 94%; cursor: pointer">
+                <span>High Priority</span>
+              </div>
+              <div class="num d-flex">
+                <span class="d-flex align-items-center">{{ highPlength }}</span>
+                <span class="ps-2" [ngStyle]="{ display: highPlength == 0 ? 'none' : 'block' }">
+                  <span class="ps-2" *ngIf="panelhigh">
+                    <img src="assets/images/dwn_up.png" />
+                  </span>
+                  <span class="ps-2" *ngIf="!panelhigh">
+                    <img src="assets/images/up_dwn.png" />
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="_calc" *ngIf="!panelIsOpenhigh">
+              <div class="med_prio" *ngFor="let h of highPriority; let i = index">
+
+                <button id="hp_btn{{ i }}" type="button" class="btn btn-primary mt-3" *ngIf="!h.isExpand"
+                  (click)="opendiv1(1, i)">
+                  <div style="text-align: start;width: -webkit-fill-available;">
+                    <div>{{ h.details.tTitle }}</div>
+                    <div class="row">
+                      <div [ngClass]="{' col-8': h.overDue > 0, ' col-12': h.overDue < 0}">
+                        <span>
+                          Target Date :
+                          {{ h.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      </div>
+                      <div class="col-4 blink_me ">
+                        <span *ngIf="h.overDue > 0" style="color: red">
+                          Overdue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+
+                <div class="card mb10" *ngIf="h.isExpand">
+                  <div class="card-header trgdt" (click)="closediv1(1, i)">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(h.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="h.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ h.details.tPrjName }}</h3>
+                      <h4>{{ h.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">{{ h.details.tDesc }}</p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="h.details.tAssignedtoprofilepic == null"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="h.details.tAssignedtoprofilepic != null" class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  h.details.tAssignedtoprofilepic
+                                }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                h.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important" style="display:block !important">
+                              <span *ngFor="let fn of h.fnames; let i=index">
+                                <a (mouseenter)="highHover = fn" (mouseleave)="highHover = -1">
+                                  <span [ngClass]="{ 'overlay-icon': true, 'hide': highHover !== fn }" style="position: absolute;
+                              left: -35px;
+                              bottom: -35px;">
+                                    {{fn}}
+                                  </span>
+                                  <span *ngFor="let pi of h.fpics;let j=index">
+                                    <span *ngIf="i == j">
+                                      <img class="contact-img" *ngIf="pi != ''"
+                                        src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{pi}}" />
+                                      <img class="contact-img" *ngIf="pi == ''"
+                                        src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                    </span>
+                                  </span>
+                                </a>
+                              </span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="h.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of h.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3" *ngIf="
+                    userId == h.details.tAssignedUid ||
+                    userId == h.details.tAssignedbyUid
+                      "></div>
+                    </div>
+                    <div class="row d-flex align-items-center" *ngIf="
+                  userId == h.details.tAssignedUid ||
+                  userId == h.details.tAssignedbyUid
+                    ">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn" (click)="markcompleted(h)">
+                          Mark as complete
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="h.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                        ><img class="" src="../../assets/images/chat.png"
+                      /></span> -->
+                        <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(h.details)" /></span>
+                        <span><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(h)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="panelIsOpenhigh" class="_calc">
+              <div class="med_prio" *ngFor="let h of highPriority; let i = index">
+
+                <button id="hp_btn{{ i }}" type="button" class="btn btn-primary mt-3" *ngIf="h.isExpand"
+                  (click)="opendiv1(1, i)">
+                  <div style="text-align: start;width: -webkit-fill-available;">
+                    <div>{{ h.details.tTitle }}</div>
+                    <div class="row">
+                      <div [ngClass]="{' col-8': h.overDue > 0, ' col-12': h.overDue < 0}">
+                        <span>
+                          Target Date :
+                          {{ h.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      </div>
+                      <div class="col-4 blink_me ">
+                        <span *ngIf="h.overDue > 0" style="color: red">
+                          Overdue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+                <div class="card mb10" *ngIf="!h.isExpand" style="border-radius: 15px"
+                  [ngStyle]="{ 'margin-top': '16px' }">
+                  <div class="card-header trgdt" (click)="closediv1(1, i)" style="cursor: pointer">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(h.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="h.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ h.details.tPrjName }}</h3>
+                      <h4>{{ h.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">
+                      {{ h.details.tDesc }}
+                    </p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="
+                                    h.details.tAssignedtoprofilepic == null
+                                  " src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="
+                                    h.details.tAssignedtoprofilepic != null
+                                  " class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                    h.details.tAssignedtoprofilepic
+                                  }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                h.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of h.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  pi
+                                }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="h.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of h.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3" *ngIf="
+                      userId == h.details.tAssignedUid ||
+                      userId == h.details.tAssignedbyUid
+                        "></div>
+                    </div>
+                    <div class="row d-flex align-items-center" *ngIf="
+                    userId == h.details.tAssignedUid ||
+                    userId == h.details.tAssignedbyUid
+                      ">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn" (click)="markcompleted(h)">
+                          Mark as complete
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="h.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                          ><img class="" src="../../assets/images/chat.png"
+                        /></span> -->
+                        <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(h.details)" /></span>
+                        <span><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(h)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Medium Priority -->
+          <div class="wid25">
+            <div class="orange" (click)="tabopenmedium()">
+              <div style="width: 94%; cursor: pointer">
+                <span class="ps-1">Medium Priority</span>
+              </div>
+              <div class="num d-flex">
+                <span class="d-flex align-items-center">{{
+                  mediumPlength
+                  }}</span>
+                <span class="ps-2" [ngStyle]="{ display: mediumPlength == 0 ? 'none' : 'block' }">
+                  <!-- <img src="assets/images/up_dwn.png"> -->
+                  <span class="ps-2" *ngIf=" panelmid">
+                    <img src="assets/images/dwn_up.png" />
+                  </span>
+                  <span class="ps-2" *ngIf="!panelmid">
+                    <img src="assets/images/up_dwn.png" />
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="_calc" *ngIf="!panelIsOpenmedium">
+
+              <div class="med_prio" *ngFor="let l of mediumPriority; let i = index">
+                <button type="button" class="btn btn-primary mt-3" (click)="opendiv1(2, i)" *ngIf="!l.isExpand">
+                  <div style="text-align: start;width: -webkit-fill-available;">
+                    <div>{{ l.details.tTitle }}</div>
+                    <div class="row">
+                      <div [ngClass]="{' col-8': l.overDue > 0, ' col-12': l.overDue < 0}">
+                        <span>
+                          Target Date :
+                          {{ l.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      </div>
+                      <div class="col-4 blink_me ">
+                        <span *ngIf="l.overDue > 0" style="color: red">
+                          Overdue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+
+                <div class="card mb10" *ngIf="l.isExpand">
+                  <div class="card-header trgdt" (click)="closediv1(2, i)">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(l.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="l.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ l.details.tPrjName }}</h3>
+                      <h4>{{ l.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">{{ l.details.tDesc }}</p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="l.details.tAssignedtoprofilepic == null"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /><img
+                                  *ngIf="l.details.tAssignedtoprofilepic != null" class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  l.details.tAssignedtoprofilepic
+                                }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                l.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of l.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                pi
+                              }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="l.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of l.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3" *ngIf="
+                    userId == l.details.tAssignedUid ||
+                    userId == l.details.tAssignedbyUid
+                      "></div>
+                    </div>
+                    <div class="row d-flex align-items-center" *ngIf="
+                  userId == l.details.tAssignedUid ||
+                  userId == l.details.tAssignedbyUid
+                    ">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn" (click)="markcompleted(l)">
+                          Mark as complete
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="l.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                        ><img class="" src="../../assets/images/chat.png"
+                      /></span> -->
+                        <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(l.details)" /></span>
+                        <span><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(l)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="panelIsOpenmedium" class="_calc">
+
+              <div class="med_prio" *ngFor="let h of mediumPriority; let i = index">
+                <button type="button" class="btn btn-primary mt-3" (click)="opendiv1(2, i)" *ngIf="h.isExpand">
+                  <div style="text-align: start;width: -webkit-fill-available;">
+                    <div>{{ h.details.tTitle }}</div>
+                    <div class="row">
+                      <div [ngClass]="{' col-8': h.overDue > 0, ' col-12': h.overDue < 0}">
+                        <span>
+                          Target Date :
+                          {{ h.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      </div>
+                      <div class="col-4 blink_me ">
+                        <span *ngIf="h.overDue > 0" style="color: red">
+                          Overdue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                <div class="card mb10" *ngIf="!h.isExpand" style="border-radius: 15px"
+                  [ngStyle]="{ 'margin-top': '16px' }">
+                  <div class="card-header trgdt" (click)="closediv1(2, i)" style="cursor: pointer">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(h.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="h.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ h.details.tPrjName }}</h3>
+                      <h4>{{ h.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">
+                      {{ h.details.tDesc }}
+                    </p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="
+                                    h.details.tAssignedtoprofilepic == null
+                                  " src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="
+                                    h.details.tAssignedtoprofilepic != null
+                                  " class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                    h.details.tAssignedtoprofilepic
+                                  }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                h.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of h.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  pi
+                                }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="h.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of h.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3" *ngIf="
+                      userId == h.details.tAssignedUid ||
+                      userId == h.details.tAssignedbyUid
+                        "></div>
+                    </div>
+                    <div class="row d-flex align-items-center" *ngIf="
+                    userId == h.details.tAssignedUid ||
+                    userId == h.details.tAssignedbyUid
+                      ">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn" (click)="markcompleted(h)">
+                          Mark as complete
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="h.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                          ><img class="" src="../../assets/images/chat.png"
+                        /></span> -->
+                        <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(h.details)" /></span>
+                        <span><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(h)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Low Priority -->
+          <div class="wid25">
+            <div class="green" (click)="tabopenlow()">
+              <div style="width: 94%; cursor: pointer">
+                <span class="ps-1">Low Priority</span>
+              </div>
+              <div class="num d-flex">
+                <span class="d-flex align-items-center">{{ lowPlength }}</span>
+                <span class="ps-2" [ngStyle]="{ display: lowPlength == 0 ? 'none' : 'block' }">
+                  <!-- <img src="assets/images/dwn_up.png"> -->
+                  <span class="ps-2" *ngIf="panellow">
+                    <img src="assets/images/dwn_up.png" />
+                  </span>
+                  <span class="ps-2" *ngIf="!panellow">
+                    <img src="assets/images/up_dwn.png" />
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="_calc" *ngIf="!panelIsOpenlow">
+
+              <div class="med_prio" *ngFor="let l of lowPriority; let i = index">
+                <button id="hp_btn{{ i }}" type="button" class="btn btn-primary mt-3" *ngIf="!l.isExpand"
+                  (click)="opendiv1(3, i)">
+                  <div style="text-align: start;width: -webkit-fill-available;">
+                    <div>{{ l.details.tTitle }}</div>
+                    <div class="row">
+                      <div [ngClass]="{' col-8': l.overDue > 0, ' col-12': l.overDue < 0}">
+                        <span>
+                          Target Date :
+                          {{ l.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      </div>
+                      <div class="col-4 blink_me ">
+                        <span *ngIf="l.overDue > 0" style="color: red">
+                          Overdue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                <div class="card mb10" *ngIf="l.isExpand">
+                  <div class="card-header trgdt" (click)="closediv1(3, i)">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(l.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="l.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ l.details.tPrjName }}</h3>
+                      <h4>{{ l.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">{{ l.details.tDesc }}</p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="l.details.tAssignedtoprofilepic == null"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="l.details.tAssignedtoprofilepic != null" class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  l.details.tAssignedtoprofilepic
+                                }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                l.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of l.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                pi
+                              }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="l.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of l.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3" *ngIf="
+                    userId == l.details.tAssignedUid ||
+                    userId == l.details.tAssignedbyUid
+                      "></div>
+                    </div>
+                    <div class="row d-flex align-items-center" *ngIf="
+                  userId == l.details.tAssignedUid ||
+                  userId == l.details.tAssignedbyUid
+                    ">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn" (click)="markcompleted(l)">
+                          Mark as complete
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="l.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                        ><img class="" src="../../assets/images/chat.png"
+                      /></span> -->
+                        <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(l.details)" /></span>
+                        <span><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(l)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="panelIsOpenlow" class="_calc">
+              <div class="med_prio" *ngFor="let h of lowPriority; let i = index">
+                <button type="button" class="btn btn-primary mt-3" (click)="opendiv1(3, i)" *ngIf="h.isExpand">
+                  <div style="text-align: start;width: -webkit-fill-available;">
+                    <div>{{ h.details.tTitle }}</div>
+                    <div class="row">
+                      <div [ngClass]="{' col-8': h.overDue > 0, ' col-12': h.overDue < 0}">
+                        <span>
+                          Target Date :
+                          {{ h.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      </div>
+                      <div class="col-4 blink_me ">
+                        <span *ngIf="h.overDue > 0" style="color: red">
+                          Overdue
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+                <div class="card mb10" *ngIf="!h.isExpand" style="border-radius: 15px"
+                  [ngStyle]="{ 'margin-top': '16px' }">
+                  <div class="card-header trgdt" (click)="closediv1(3, i)" style="cursor: pointer">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(h.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="h.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ h.details.tPrjName }}</h3>
+                      <h4>{{ h.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">
+                      {{ h.details.tDesc }}
+                    </p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="
+                                    h.details.tAssignedtoprofilepic == null
+                                  " src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="
+                                    h.details.tAssignedtoprofilepic != null
+                                  " class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                    h.details.tAssignedtoprofilepic
+                                  }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                h.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of h.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  pi
+                                }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="h.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of h.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3" *ngIf="
+                      userId == h.details.tAssignedUid ||
+                      userId == h.details.tAssignedbyUid
+                        "></div>
+                    </div>
+                    <div class="row d-flex align-items-center" *ngIf="
+                    userId == h.details.tAssignedUid ||
+                    userId == h.details.tAssignedbyUid
+                      ">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn" (click)="markcompleted(h)">
+                          Mark as complete
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="h.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                          ><img class="" src="../../assets/images/chat.png"
+                        /></span> -->
+                        <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(h.details)" /></span>
+                        <span><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(h)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Completed -->
+          <div class="wid25">
+            <div class="blue" (click)="tabopencomplete()">
+              <div style="width: 94%; cursor: pointer">
+                <span class="ps-1">Completed</span>
+              </div>
+              <div class="num d-flex">
+                <span class="d-flex align-items-center">{{
+                  completedlength
+                  }}</span>
+                <span class="ps-2" [ngStyle]="{
+                    display: completedlength == 0 ? 'none' : 'block'
+                  }">
+                  <!-- <img src="assets/images/dwn_up.png"> -->
+                  <span class="ps-2" *ngIf="panelcomp">
+                    <img src="assets/images/dwn_up.png" />
+                  </span>
+                  <span class="ps-2" *ngIf="!panelcomp">
+                    <img src="assets/images/up_dwn.png" />
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="_calc" *ngIf="!panelIsOpencomplete">
+
+              <div class="med_prio" *ngFor="let c of completedArray; let i = index">
+                <button id="dispTitle" type="button" class="btn btn-primary mt-3" (click)="opendiv1(4, i)"
+                  *ngIf="!c.isExpand">
+                  <div style="text-align: start">
+                    <div>{{ c.details.tTitle }}</div>
+                    <div>
+                      <span>
+                        Target Date :
+                        {{ c.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      <span *ngIf="c.overDue > 0" style="margin-left: 50px; color: red">
+                        Overdue
+                      </span>
+                    </div>
+                  </div>
+                </button>
+
+
+                <div class="card mb10" *ngIf="c.isExpand">
+                  <div class="card-header trgdt" (click)="closediv1(4, i)">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(c.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ c.details.tPrjName }}</h3>
+                      <h4>{{ c.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">{{ c.details.tDesc }}</p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="c.details.tAssignedtoprofilepic == null"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="c.details.tAssignedtoprofilepic != null" class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  c.details.tAssignedtoprofilepic
+                                }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                c.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of c.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                pi
+                              }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="c.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of c.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3"></div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-success grp-mark-btn"
+                          style="background: #04a53e; color: #ffffff" data-bs-toggle="modal"
+                          data-bs-target="#createActionModal" (click)="editTask(c.details)">
+                          Completed
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="c.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                        ><img class="" src="../../assets/images/chat.png"
+                      /></span> -->
+                        <!-- <button type="button"class="btn btn-primary grp-mark-btn"
+                        style=" background: blue;color: #ffffff; cursor: pointer;"data-bs-toggle="modal"
+                         data-bs-target="#createActionModal"(click)="editTask(c.details)">View</button> -->
+                        <!-- <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                          data-bs-toggle="modal" data-bs-target="#createActionModal"
+                          (click)="editTask(c.details)" /></span> -->
+                        <span *ngIf="
+                      userId == c.details.tAssignedUid ||
+                      userId == c.details.tAssignedbyUid
+                        "><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(c)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="panelIsOpencomplete" class="_calc">
+              <div class="med_prio" *ngFor="let h of completedArray; let i = index">
+                <button id="dispTitle" type="button" class="btn btn-primary mt-3" (click)="opendiv1(4, i)"
+                  *ngIf="h.isExpand">
+                  <div style="text-align: start">
+                    <div>{{ h.details.tTitle }}</div>
+                    <div>
+                      <span>
+                        Target Date :
+                        {{ h.details.tDueDate | date : "MM.dd.yy" }}</span>
+                      <span *ngIf="h.overDue > 0" style="margin-left: 50px; color: red">
+                        Overdue
+                      </span>
+                    </div>
+                  </div>
+                </button>
+                <div class="card mb10" *ngIf="!h.isExpand" style="border-radius: 15px"
+                  [ngStyle]="{ 'margin-top': '16px' }">
+                  <div class="card-header trgdt" (click)="closediv1(4, i)" style="cursor: pointer">
+                    <div class="ml29">
+                      <span class="_date">Target Date:</span>
+                      <span class="_noDate" *ngIf="typeOf(h.details.tDueDate) === 'string'">{{ item }}</span>
+                    </div>
+                    <div class="overdue" *ngIf="h.overDue > 0">
+                      <span>Overdue</span>
+                    </div>
+                  </div>
+                  <div class="card-body p06rem">
+                    <div class="title">
+                      <h3 class="m-0 b-0">{{ h.details.tPrjName }}</h3>
+                      <h4>{{ h.details.tTitle }}</h4>
+                    </div>
+                    <p class="card-text _text pb-2 px-0">
+                      {{ h.details.tDesc }}
+                    </p>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Assigned to: </span>
+                          </div>
+                          <div class="_Prof">
+                            <div class="">
+                              <span>
+                                <img class="contact-img" *ngIf="
+                                    h.details.tAssignedtoprofilepic == null
+                                  " src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" />
+                                <img *ngIf="
+                                    h.details.tAssignedtoprofilepic != null
+                                  " class="contact-img" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                    h.details.tAssignedtoprofilepic
+                                  }}" /></span>
+                            </div>
+                            <div style="line-height: 1; display: grid">
+                              <span class="_tiTle">{{
+                                h.details.tAssignedtoName
+                                }}</span>
+                              <!-- <span class="roLe">Controller</span> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="Profile">
+                          <div>
+                            <span class="assIgn">Followed by: </span>
+                          </div>
+                          <span class="follow">
+                            <div lass="d-flex" style="display:block !important">
+                              <span *ngFor="let pi of h.fpics">
+                                <img class="contact-img" *ngIf="pi != ''" src="https://devaxeloneapi.axelautomotive.com/api/v1/resources/profilepics/thumbs/{{
+                                  pi
+                                }}" />
+                                <img class="contact-img" *ngIf="pi == ''"
+                                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" /></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row tags">
+                      <span>Tags:</span>
+                      <div class="tag-btn" *ngIf="h.tagname != ''">
+                        <button type="button" class="btn btn-primary grp-sml-btn" *ngFor="let tg of h.tagname">
+                          {{ tg }}
+                        </button>
+                      </div>
+                      <div class="bdr-btm m-auto my-3"></div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary grp-mark-btn"
+                          style="background: #04a53e; color: #ffffff" data-bs-toggle="modal"
+                          data-bs-target="#createActionModal" (click)="editTask(h.details)">
+                          Completed
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-between">
+                        <span *ngIf="h.details.tFileUpload"><img class="" src="../../assets/images/pin.png" /></span>
+                        <!-- <span
+                          ><img class="" src="../../assets/images/chat.png"
+                        /></span> -->
+                        <!-- <button
+                          type="button"
+                          class="btn btn-primary grp-mark-btn"
+                          style="
+                            background: #04a53e;
+                            color: #ffffff;
+                            cursor: pointer;
+                          "
+                          data-bs-toggle="modal"
+                          data-bs-target="#createActionModal"
+                          (click)="editTask(h.details)"
+                        >
+                          View
+                        </button> -->
+                        <!-- <span><img class="" src="../../assets/images/pen.png" style="cursor: pointer"
+                            data-bs-toggle="modal" data-bs-target="#createActionModal"
+                            (click)="editTask(h.details)" /></span>  -->
+                        <span *ngIf="
+                        userId == h.details.tAssignedUid ||
+                        userId == h.details.tAssignedbyUid
+                          "><img class="" src="../../assets/images/trash.png" style="cursor: pointer"
+                            (click)="deleteTask(h)" /></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,422 @@
+<header class="navbar sticky-top bg-white flex-md-nowrap py-2">
+  <!-- <div class="ms-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+    <button class="navbar-toggler" type="button">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div> -->
+
+  <!-- <a class="navbar-brand ms-lg-3" href="#" (click)="headClick()"><img src="assets/images/Launch.png" class="img-fluid brand-img"></a> -->
+
+  <div class="d-lg-flex justify-content-start align-items-center">
+    <div class="heading d-lg-flex justify-content-start align-items-center">
+      <!-- <h1>ACTIONS</h1> -->
+      <!-- <div>
+
+      </div> -->
+      <img src="../../assets/images/analyze.png" alt="" style="margin-left: 1.5rem; cursor: pointer"
+        data-bs-toggle="modal" data-bs-target="#actionmodule" data-backdrop="static" data-keyboard="false"
+        (click)="imgClick()" *ngIf="projectId == ''" />
+      <img src="../../assets/images/Filter.png" alt="" style="margin-left: 1rem; cursor: pointer" data-bs-toggle="modal"
+        data-bs-target="#filtermodule" data-backdrop="static" data-keyboard="false" (click)="clkFilter('allmodules')" />
+    </div>
+  </div>
+  <div class="ht">
+    <button type="button" (click)="filter('ALL')" [ngClass]="{ 'bg-color1': dataref.rs == 'ALL' }"
+      class="btn btn-outline-info filters btn-sm rounded-pill htbtn">
+      ALL ACTIONS
+    </button>
+    <button type="button" (click)="filter('ABM')" [ngClass]="{ 'bg-color1': dataref.rs == 'T_ASSIGNEDBY_UID' }"
+      class="btn btn-outline-info filters btn-sm rounded-pill htbtn">
+      CREATED BY ME
+    </button>
+    <button type="button" (click)="filter('ATM')" [ngClass]="{ 'bg-color1': dataref.rs == 'T_ASSIGNED_UID' }"
+      class="btn btn-outline-info filters btn-sm rounded-pill htbtn">
+      ASSIGNED TO ME
+    </button>
+    <button type="button" (click)="filter('FBM')" [ngClass]="{ 'bg-color1': dataref.rs == 'T_FOLLOWER_UID' }"
+      class="btn btn-outline-info filters btn-sm rounded-pill htbtn">
+      FOLLOWED BY ME
+    </button>
+  </div>
+
+  <div class="d-lg-flex justify-content-end ms-lg-auto me-lg-4">
+    <div class="heading mt-lg-0 mt-3 d-flex justify-content-end align-items-center">
+      <div class="icons me-auto pe-3">
+        <img src="assets/images/Action.png" class="img-fluid" alt="" />
+        <img src="assets/images/chat.png" class="img-fluid" alt="" />
+        <img src="assets/images/Favourite.png" class="img-fluid" alt="" />
+        <img src="assets/images/Export.png" class="img-fluid" alt="" />
+        <img src="assets/images/Print.png" class="img-fluid" alt="" />
+        <img src="assets/images/settings.png" class="img-fluid" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class=" d-flex align-items-center mx-auto mx-lg-0 pe-lg-5 py-2 py-lg-0">
+
+    <div class="prof d-none d-lg-block">
+      <div class="text">
+        <div class="grt">Welcome,</div>
+        <div class="name">{{uname}} <span>{{usertitle}}</span></div>
+      </div>
+    </div>
+    <div *ngIf="projectId=='1'"><a routerLink="#"><img class="prjlogo" src="assets/images/AXEL-One_logo.png"></a></div>
+    <div *ngIf="projectId=='2'"><a routerLink="#"><img class="prjlogo" src="assets/images/powered_by.png"></a></div>
+    <div *ngIf="projectId=='3'"><a routerLink="#"><img class="prjlogo" src="assets/images/Axel-Touch-logo.png"></a></div>
+    <div *ngIf="projectId=='4'"><a routerLink="#"><img class="prjlogo" src="assets/images/6Pix_logo.png"></a></div>
+    <div *ngIf="projectId=='5'"><a routerLink="#"><img class="prjlogo" src="assets/images/Xchange-Logo.png"></a></div>
+    <div *ngIf="projectId=='6'"><a routerLink="#"><img class="prjlogo" src="assets/images/Xiom_logo.png"></a></div>
+    <div *ngIf="projectId=='7'"> <a routerLink="#"><img class="prjlogo" src="assets/images/trax_logo.png"></a></div>
+    <div *ngIf="projectId==''"><a routerLink="#"><img class="prjlogo" src="assets/images/AXEL-One_logo.png"></a></div>
+  </div> -->
+</header>
+
+<!-- action module -->
+
+<div class="modal fade" id="actionmodule" tabindex="-1" aria-labelledby="actionmoduleLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-body">
+      <div class="modal-content body ps-3 py-0" style="border-radius: 25px">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+          <div class="action-modules-popup">
+            <div class="header d-flex align-items-center">
+              <h5 class="title m-0 ms-2">
+                <img src="" alt="" /> <span class="slash">//</span>ACTION
+                MODULES
+              </h5>
+              <a data-bs-dismiss="modal" type="button" class="close-btn ms-auto me-2"><i class="fa-solid fa-xmark"></i>
+              </a>
+            </div>
+            <div class="body">
+              <div class="col-7 m-auto mb-5">
+                <div class="mb-1">
+                  <button type="button" [ngClass]="{ 'bg-color': selectedNameid == 'AllModules' }"
+                    class="btn act-btn w-100" (click)="open('AllModules')">
+                    All Modules
+                  </button>
+                </div>
+                <div class="mb-1" *ngFor="let s of act">
+                  <button type="button" class="btn act-btn w-100" [ngClass]="{
+                      'bg-color': selectedNameid == s.aopId,
+                      'bg-color-none': selectedNameid == ''
+                    }" (click)="open(s.aopId)">
+                    {{ s.aopName }}
+                  </button>
+                </div>
+              </div>
+              <div class="footer p-3 mb-2">
+                <div class="text-center d-flex align-items-center px-4">
+                  <button type="button" class="btn btn-save" (click)="saveName()">
+                    Save
+                  </button>
+                  <h3 class="m-0 cancel-txt ms-auto">
+                    <a data-bs-dismiss="modal" #cancel style="cursor: pointer">Cancel</a>
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--//////////////// filters//////////////// -->
+
+<div class="modal fade" id="filtermodule" tabindex="-1" aria-labelledby="actionmoduleLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-body" style="background-color: transparent;">
+      <div class="modal-content container-fluid d-flex justify-content-start align-items-center">
+        <div class="col-lg-12 position-relative">
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="reports-controls">
+                <div class="header">
+                  <h5 class="title m-0">
+                    <img src="" alt="" /> <span class="slash">//</span>FILTERS
+                  </h5>
+                  <a type="button" class="close-btn ms-auto me-2" data-bs-dismiss="modal" #cancelFilterModal><i
+                      class="fa-solid fa-xmark"></i>
+                  </a>
+                </div>
+                <div class="body">
+                  <div class="list-group">
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('allmodules')">
+                      <div class="list-btn">
+                        <div class="d-flex align-items-center justify-content-end row">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">AllModules</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('stores')">
+                      <div class="list-btn">
+                        <div class="d-flex align-items-center justify-content-center row">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="../../assets/images/Stores.png" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Stores(S)</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('assign')">
+                      <div class="list-btn">
+                        <div class="d-flex align-items-center justify-content-center row">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="../../assets/images/team.png" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Assigned To</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('status')">
+                      <div class="list-btn">
+                        <div class="row d-flex align-items-center justify-content-center">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Status</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('ddate')">
+                      <div class="list-btn">
+                        <div class="row d-flex align-items-center justify-content-center">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="../../assets/images/calendar-icon.png" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Due Date</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('priority')">
+                      <div class="list-btn">
+                        <div class="row d-flex align-items-center justify-content-center">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Priority</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('followers')">
+                      <div class="list-btn">
+                        <div class="row d-flex align-items-center justify-content-center">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="../../assets/images/team.png" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Followers</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a class="list-group-item list-group-item-action p-3" (click)="clkFilter('tags')">
+                      <div class="list-btn">
+                        <div class="row d-flex align-items-center justify-content-center">
+                          <div class="col-3">
+                            <img class="rpt-icon" src="" alt="" />
+                          </div>
+                          <div class="col-6">
+                            <div class="text-start">
+                              <h6 class="m-0 p-0">Tags</h6>
+                            </div>
+                          </div>
+                          <div class="col-3 m-auto text-end">
+                            <img class="arrow-icon" src="../../assets/images/double-arrow-right.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                  </div>
+                </div>
+                <div class="footer p-3 mb-2">
+                  <div class="text-center d-flex align-items-center">
+                    <button type="button" class="btn btn-view mx-1" (click)="savefilters()">
+                      View Report
+                    </button>
+                    <button type="button" class="btn btn-save mx-1" (click)="clkFilter('clearall')">
+                      Clear Filters
+                    </button>
+                  </div>
+                  <div class="cancel-txt"><a data-bs-dismiss="modal" style="display: none;">Cancel</a></div>
+                </div>
+              </div>
+            </div>
+            <!-- ////////////////////////////////// REPORT PERIOD /////////////////////////////// -->
+            <div class="col-lg-8">
+              <div class="report-period" *ngIf="repdis">
+                <div class="header">
+                  <h5 class="title m-0"><img src="" alt="" />{{selectedFilName}}</h5>
+                  <a type="button" class="close-btn ms-auto me-2" (click)="closereports()"><i
+                      class="fa-solid fa-xmark"></i>
+                  </a>
+                </div>
+                <div class="body px-5 py-4">
+
+                  <div class="report-grid" *ngIf="filterName == 'allmodules'" style="margin-bottom: 1em"> 
+
+                    <button type="button" class="btn report-btn"
+                      [ngClass]="{'bg-color': allModulesName == 'modulesAll', 'bg-color-none': allModulesName == ''  }"
+                      (click)="selectedItems('modulesAll')">
+                      All Modules  </button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'allmodules'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':allModulesData.indexOf(m.aopId)>=0,'bg-color-none':allModulesData.indexOf(m.aopId)<0}"
+                      (click)="selectedItems(m.aopId)">{{m.aopName}}</button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'stores'" style="margin-bottom: 1em">                   
+                    <button type="button" class="btn report-btn"                    
+                      [ngClass]="{'bg-color': allStoresName == 'allStores', 'bg-color-none': allStoresName == ''  }"
+                      (click)="selectedItems('allStores')"> All Stores                   
+                    </button>                 
+                  </div>
+                  <div class="report-grid" *ngIf="filterName == 'stores'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':storData.indexOf(m.asId)>=0,'bg-color-none':storData.indexOf(m.asId)<0}"
+                      (click)="selectedItems(m.asId)">{{m.asDealername}}</button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'assign'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':assData.indexOf(m.uid)>=0,'bg-color-none':assData.indexOf(m.uid)<0}"
+                      (click)="selectedItems(m.uid)">{{m.ufname}}</button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'status'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':staData.indexOf(m.tsId)>=0,'bg-color-none':staData.indexOf(m.tsId)<0}"
+                      (click)="selectedItems(m.tsId)">{{m.tsName}}</button>
+                  </div>
+
+                  <div class="dateFilter" *ngIf="filterName == 'ddate'">
+                    <input type="date" class="form-control" [(ngModel)]="filterDate"
+                      style="font-family: Roboto-Medium;font-size: 0.8rem;border-radius: 2rem;">
+                    <button type="button" class="btn report-btn" (click)="selectedItems(filterDate)">
+                      Date Confirm
+                    </button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'priority'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':priData.indexOf(m.tpId)>=0,'bg-color-none':priData.indexOf(m.tpId)<0}"
+                      (click)="selectedItems(m.tpId)">{{m.tpTitle}}</button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'followers'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':follData.indexOf(m.uid)>=0,'bg-color-none':follData.indexOf(m.uid)<0}"
+                      (click)="selectedItems(m.uid)">{{m.ufname}}</button>
+                  </div>
+
+                  <div class="report-grid" *ngIf="filterName == 'tags'">
+                    <button type="button" class="btn report-btn" *ngFor="let m of MainData;"
+                      [ngClass]="{'bg-color':tData.indexOf(m.tagId)>=0,'bg-color-none':tData.indexOf(m.tagId)<0}"
+                      (click)="selectedItems(m.tagId)">{{m.tagTitle}}</button>
+                  </div>
+
+                  <!-- <div class="col-lg-12 report-calendar mt-5">
+                    <div class="col-lg-6"></div>
+                    <div class="col-lg-6"></div>
+                  </div> -->
+                </div>
+                <div class="footer p-3 mb-2">
+                  <div class="text-center d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn btn-sm-save mx-2" (click)="selectedClear(filterName)">
+                      Selected Clear
+                    </button>
+                    <!-- <div class="cancel-txt mb-2 mx-2">
+                      <a href="#" class="m-0 p-0">Cancel</a>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- This is the sidebar Offcanvas -->
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <!-- <div>
+
+    </div>
+    <div class="dropdown mt-3">
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </div> -->
+  </div>
+</div>
